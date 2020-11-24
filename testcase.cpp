@@ -1,6 +1,9 @@
 #include<iostream>
 using namespace std;
 int main(void){
+	cout<<"Hello world\n";
+	cout<<"I am nithin\n";
+	cout<<"commiting\n";
     cout<<"Hello world\n";
     cout<<" Mariya\n";
     cout<<"Hello world\n";
