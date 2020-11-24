@@ -6,9 +6,9 @@ class Student
 {
 };
 void Librarian()
-{int a;
+{int b;
         printf("\n\nWelcome Librarian \n\n");
-        scanf("%d",&a);
+        scanf("%d",&b);
 }
 void Student()
 {int a;
