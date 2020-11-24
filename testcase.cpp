@@ -4,5 +4,14 @@ int main(void){
 	cout<<"Hello world\n";
 	cout<<"I am nithin\n";
 	cout<<"commiting\n";
-	return 0;
+    cout<<"Hello world\n";
+    cout<<" Mariya\n";
+    cout<<"Hello world\n";
+    cout<<"I am Roshin"<<endl;
+    cout<<"Sanjay \n
+    cout<<"Shahma \n";
+    cout<<"changed \n";
+    cout<<"Piller Kollam\n";
+    return 0;
 	}
+
