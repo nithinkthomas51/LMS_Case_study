@@ -1,11 +1,14 @@
+#include<iostream>
 #include<cstdio>
 #include<gdbm.h>
 #include<stdlib.h>
 #include<cstring>
 #include <termios.h>
 #include <unistd.h>
-#include<iostream>
+
 using namespace std;
+
+
 //Define Database
 GDBM_FILE dbf;
 datum key,data;
@@ -49,31 +52,86 @@ class Book
   }
 };
 
-class Lib:public Books
+
+*/
+class Lib
+//:public Books
 {
- 	int userid;
- 	char name
-	public:
-	void librarian;
+    char name[50];
+
+    public:
+    Lib(){
+    }
+    
+    void Librarian(char* username)
+     {        
+         dbf=gdbm_open("librarian.db",0,GDBM_WRCREAT,0666,0);
+  	 if(!dbf)
+  	 {
+    		printf("\nError occured while receiving the data, please try again");
+    		printf("\n");
+  	 }
+  	 key=gdbm_firstkey(dbf);
+    	 if(key.dptr==NULL)
+    	 {
+    	    printf("Welcome Librarian please enter your name");
+    	    scanf("%s",name);
+    	    sprintf(keybuf,"%s",username);
+	    key.dsize=strlen(keybuf)+1;
+	    key.dptr=keybuf;
+	    sprintf(databuf,"%s",name);
+	    data.dsize=strlen(databuf)+1;
+	    data.dptr=databuf;
+	    if(gdbm_store(dbf,key,data,GDBM_INSERT))
+            {	
+             	printf("\nError occured!Emp id exists.Member  is not added\n");
+            }
+            else 
+            
+            printf("\n\n\t\t\t************Welcome Librarian************** \n\nPress any key \n");
+            
+    gdbm_close(dbf);
+}
+}
+
+    void AddBook();
+    void RemoveBook();
+    void PurchaseRequest();
+    void RemoveUser();
+
 };
 
-
+/*
 class Stud:public Book
-{
+{   int 
 	public:
-        void Student();
+    void Student();
+    void SearchBook();
+    void Borrow();
+    void BookStatus();
+    void Reserve();
+    void ReserveCancellation();
+    void PurchaseRequest();
+    
 };
 
 class Fac:public Book
 {
+    int 
+	public:
+    void Student();
+    void SearchBook();
+    void Borrow();
+    void BookStatus();
+    void Reserve();
+    void ReserveCancellation();
 
 };
+
 */
 
-
-
 //Student
-void /*Stud::*/Student()
+void Student()
 {
 	int a;
         printf("\n\nWelcome Student \n\n Press any key \n ");
@@ -84,17 +142,26 @@ void /*Stud::*/Student()
 
 
 //Librarian
-void /*Lib::*/Librarian()
-{   
-	int b;
-  	printf("\n\n\t\t\t************Welcome Librarian************** \n\nPress any key \n");
+
+   /* exit:
+	gdbm_close(dbf);
+    	    
+	 int b;
+  	 printf("\n\n\t\t\t************Welcome Librarian************** \n\nPress any key \n");
+  	 printf("\n\t\t\t\t*********** LIBRARY MANAGEMENT SYSTEM ***********\n\n\t\t\t\n");
+         printf("\n\t\t\t\t\t\tSelect Profile \n");
+         printf("\n\t\t\t\t\t\t1.Librarian\n\n\t\t\t\t\t\t2.Faculty\n\n\t\t\t\t\t\t3.Student\n\n\t\t\t\t\t\t4.Help\n\n\t\t\t\t\t\t5.Close Application\n");
+        printf("\n\n\t\t\t\t\t\tEnter your choice : ");
+        scanf("%d",&ch);
   	scanf("%d",&b);
 }
 
 
 
 //Faculty
-void /*Fac::*/ Faculty()
+*/
+
+void  Faculty()
 { 
 	int a;
         printf("\n\nWelcome Faculty \n\n Press any key \n");
@@ -166,7 +233,7 @@ void Help()
 //Authenticate
 
 void authenticate(int a)
-{
+{Lib l;
   	dbf=gdbm_open("users.db",0,GDBM_WRCREAT,0666,0);
   	if(!dbf)
   	{
@@ -233,16 +300,22 @@ void authenticate(int a)
             			 {	
              				printf("\nError occured!Emp id exists.Member  is not added\n");
             			 } 
-             			else    printf("\nLibrarian account Created\n");
+             			else    
+             			{
+             				printf("\n\n\nLibrarian account Created\n");
+             				printf("\n\nLogin to continue \n\n\n\n\n\n\n\n\n");
+             				goto x;
+             			}
+             				             			
 	   		}
 	  		else   printf("Access Denied !");
 	  	}
 		else
 		{
-			int attempts=1,flag=0;
+			x:int attempts=1,flag=0;
 			int maxTry = 3;
 			while(attempts<=maxTry&&flag==0)
-    			{
+    			{	
 	    			printf("\nEnter a User name  :");
         			scanf("%s",username);
         			sprintf(keybuf,"%s",username);
@@ -274,10 +347,10 @@ void authenticate(int a)
              
              			        
              				if(strcmp(password,realPassword)==0)
-             				{
+             				{       gdbm_close(dbf);
              					flag=1;
               					system("clear");
-              					Librarian();
+                                       l.Librarian(username);
               				}
     					else
      					{	
