@@ -308,7 +308,7 @@ void authenticate(int a)
              				{
              					flag=1;
               					system("clear");
-              					Student();
+              					Faculty();
               				}
     					else
      					{	system("clear");		
@@ -353,7 +353,7 @@ void authenticate(int a)
              		else    
              		{
              			printf("\nFaculty account Created\n");
-             			Student();
+             			Faculty();
              		}
 	   	}
 	  		
