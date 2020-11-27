@@ -236,50 +236,64 @@ void Report()
 void Help()
 { 
 	int c;
+	char ch;
+	using namespace std;
+	
+	do{
+	system("clear");
 	cout<<"\t\t\t**********Welcome to Library**********"<<endl;
 	cout<<"1. Registration and Login\n2. Search\n3. Borrowing book/journal\n4. Reservation\n5. Request for new book\n6. Notification\n";
-	cout<<"Enter your choice:\n";
+	cout<<"Enter your choice : ";
 	cin>>c;
 	switch(c)
 	{
 		case 1:
 		{
 			system("clear");
-			cout<<"\n***Librarian***\n\n* To register, enter the Unique 6 digit PIN and create username and password \n* To login, enter your usename and password\n\n";
+			cout<<"****Registration and Login****\n\n";
+			cout<<"\n***Librarian***\n\n* To register, enter the Unique 6 digit PIN and create username and password \n* To login, enter your username and password\n\n";
 			cout<<"***Faculty/Student***\n\n* To register, enter your unique username and password. Remember, by default your username is the password\n* once you login to the system, you have to change the password\n\n";
 			break;
 		}
 		case 2:
 		{
 			system("clear");
-			cout<<"* You can search any book/journal by uing book name, author's name, category\n* You can search for the list of books/journal under author's name, category\n* You can see who has borrowed a book/journal and the due date for the same\n";
+			cout<<"****search****\n\n";
+			cout<<"* You can search any book/journal by using book name, author's name, category\n* You can search for the list of books/journal under author's name, category\n* You can see who has borrowed a book/journal and the due date for the same\n";
 			break;
 		}
 		case 3:
 		{
 			system("clear");
-			cout<<"* Faculty can access any book/journal\n* Students can access any books/jouranl except reference books\n";
+			cout<<"****Borrowing Book/journal****\n\n";
+			cout<<"* Faculty can access any book/journal\n* Students can access any book/journal except reference books\n";
 			break;
 		}
 		case 4:
 		{
 		system("clear");
+		cout<<"****Reservation****\n\n";
 		cout<<"* You can reserve a book/journal borrowed by others currently\n* You can see the status of the book/journal which is reserved or borrowed and respective due date\n* You can also cancel the reservation made earlier\n";
 		break;
 		}
 		case 5:
 		{
 		system("clear");
+		cout<<"****Request for new book****\n\n";
 		cout<<"* User can place request for purchase of new book by providing details about the name of the book,author's name and publisher\n"; 
 		break;
 		}
 		case 6:
 		{
 		system("clear");
+		cout<<"****Notification****\n\n";
 		cout<<"* You will recieve a notification when you made the reservation\n* You will recieve a notification when a user made a reservation for the book which you have currently\n* You will recieve a notification about the expiry of due date of the book 4 days in advance\n";
 		break;
 		}
 	}
+	cout<<"\n\nBack to help(Y/N)";
+	cin>>ch;
+	}while(ch=='Y' or ch=='y');
 }
 
 
@@ -669,6 +683,7 @@ x:system("clear");
                 break;
          case 4:system("clear");
                 Help();
+                goto x;
                 break;
          case 5:exit(0);
          
