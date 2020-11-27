@@ -10,13 +10,14 @@ using namespace std;
 
 
 //Define Database
-GDBM_FILE dbf,dbb;
+GDBM_FILE dbf,dbb,dbp;
 datum key,data;
 char keybuf[50],databuf[512];
 
 //void Login(char ch)
 
-
+void authenticate(int);
+void changePassword();
 
 class Book
 { public:
@@ -75,6 +76,37 @@ class Book
 	gdbm_close(dbb);
            
  } 
+  void DeleteBook()
+  {	char ch;
+  	dbb=gdbm_open("books.db",0,GDBM_WRCREAT,0666,0);
+	if(!dbb)
+	{
+		printf("\nError occured while receiving the data, please try again");
+		printf("\n");
+	}
+	
+	sprintf(keybuf,"%d",ISBN);
+	key.dsize=strlen(keybuf)+1;
+	key.dptr=keybuf;
+	data=gdbm_fetch(dbb,key);
+        strcpy(databuf,data.dptr);
+        sscanf(databuf,"%s %s %s %s %d",bookName,author,publication,category,&ref);
+        printf("\nDo You want to delete  %s ?(Y/N)",bookName);
+        cin>>ch;
+        if(ch=='y'||ch=='Y')
+        {int ret;
+        	ret=gdbm_delete(dbb,key);
+    		if(ret==0)
+    			printf("\n The Book is removed\n");
+    		else
+    		printf("\n Error occured,please try again \n");
+        }
+        else
+        exit(0);
+        gdbm_close(dbb);
+        }
+    	
+ 
 };
 
 
@@ -115,7 +147,7 @@ class Lib:public Book
             goto a;
          }
          else 
-         {     int ch;
+         {     int ch,n;
          	sprintf(keybuf,"%s",username);
 	    	key.dsize=strlen(keybuf)+1;
 	    	key.dptr=keybuf;
@@ -124,28 +156,51 @@ class Lib:public Book
                sscanf(databuf,"%s ",name);
 	        a:printf("\n\t\t\t\t*********** Welcome %s ***********\n\n\t\t\t\n",name);
         	printf("\n\t\t\t\t\t\tSelect an Option \n");
-               printf("\n\t\t\t\t\t\t1.Add Book Or Journal\n\n\t\t\t\t\t\t2.Add User\n\n\t\t\t\t\t\t3.Remove Book or Journal \n\n\t\t\t\t\t\t4.Purchase Requests\n\n\t\t\t\t\t\t5.Change Password\n\n\t\t\t\t\t\t6.Notifications\n\n\t\t\t\t\t\t7.Close Application\n");
+               printf("\n\t\t\t\t\t\t1.Add New User\n\n\t\t\t\t\t\t2.Add Book or Journal\n\n\t\t\t\t\t\t3.Remove Book or Journal \n\n\t\t\t\t\t\t4.Purchase Requests\n\n\t\t\t\t\t\t5.Change Password\n\n\t\t\t\t\t\t6.Notifications\n\n\t\t\t\t\t\t7.Close Application\n");
         	printf("\n\n\t\t\t\t\t\tEnter your choice : ");
         	scanf("%d",&ch);
         	switch(ch)
         	{
-        	case 1:system("clear");
-        	       printf("\n ISBN :");
-        	       scanf("%d",&ISBN);
-        	       printf("\n Book Name  : ");
-        	       scanf("%s",bookName);
-        	       printf("\n Author  : ");
-        	       scanf("%s",author);
-        	       printf("\n Publication  : ");
-        	       scanf("%s",publication);
-        	       printf("\n Category  : ");
-        	       scanf("%s",category);
-        	       printf("\n Is this a Reference Book?  (0 for No/1 for Yes): ");
-        	       scanf("%d",&ref);
-        	       AddBook();
+        		case 1: system("clear");
+        			c:printf("\n\n\nDo you want add \n1.Student  Account \n2.Faculty Account\nEnter your choice  :");
+        			cin>>n;
+        			if(n==1)authenticate(3);
+        			else if(n==2)authenticate(2);
+        			else { system("clear"); cout<<endl<<"\n\nWrong Choice"; goto c;}
+        			break;
+        			
+        		case 2: system("clear");
+        	      	        printf("\n ISBN :");
+        	       	scanf("%d",&ISBN);
+        	      	 	printf("\n Book Name  : ");
+        	       	scanf("%s",bookName);
+        	       	printf("\n Author  : ");
+        	       	scanf("%s",author);
+        	      	 	printf("\n Publication  : ");
+        	       	scanf("%s",publication);
+        	       	printf("\n Category  : ");
+        	       	scanf("%s",category);
+        	       	printf("\n Is this a Reference Book?  (0 for No/1 for Yes): ");
+        	       	scanf("%d",&ref);
+        	       	AddBook();
+        	       	break;
+        	       case 3:  system("clear");
+        	      	        printf("\n ISBN :");
+        	      	        scanf("%d",&ISBN);
+        	      	        DeleteBook();
+        	      	        break;
+        	       case 4:  break;
+        	       
+        	       case 5: changePassword();
+        	       	break;
+        	       	
+        	       
+        	      	        
+        	 
         	 }
         
-     }       
+     } 
+           
     gdbm_close(dbf);
 }
 
@@ -646,6 +701,82 @@ void authenticate(int a)
 	}		
 	//gdbm_close(dbf);
     	return ;
+}
+
+//Change Password
+
+void changePassword()
+{	dbp=gdbm_open("users.db",0,GDBM_WRCREAT,0666,0);
+  	if(!dbp)
+  	{
+    		printf("\nError occured while receiving the data, please try again");
+    		printf("\n");
+  	}
+  	char username[50];
+	printf("\nEnter Your name  :");
+        scanf("%s",username);
+        sprintf(keybuf,"%s",username);
+        key.dsize=strlen(keybuf)+1;
+        key.dptr=keybuf;
+        if(gdbm_exists (dbp,key))
+        { char password[50];
+          char realType;   
+          char realPassword[50];
+          char newPassword1[50];
+          char newPassword2[50];
+          data=gdbm_fetch(dbp,key);
+          strcpy(databuf,data.dptr);
+          sscanf(databuf,"%s %c",realPassword,&realType);
+          printf("\n\nEnter Current Password  : ");
+
+		//Disable echo
+      		 termios oldt;
+		 tcgetattr(STDIN_FILENO, &oldt);
+		 termios newt = oldt;
+		 newt.c_lflag &= ~ECHO;
+	       tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+																					   
+		//Input the password
+																					       		scanf("%s",password);
+																					 
+		//Re-enable
+																					       		tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+             
+             			        
+                if(strcmp(password,realPassword)==0)
+                {
+                    q:cout<<endl<<"\n Enter New Password";
+                    scanf("%s",newPassword1);
+                    cout<<endl<<"\n Enter New Password Again";
+                    scanf("%s",newPassword2);
+                    if(strcmp(newPassword1,newPassword2)==0)
+                    {
+                    	sprintf(databuf,"%s %c",newPassword1,realType);
+                    	data.dsize=strlen(databuf)+1;
+     		     	data.dptr=databuf;
+		     	if(gdbm_store(dbp,key,data,GDBM_REPLACE))
+		     	{
+		     		printf("\n Error occured, Password not Changed\n");
+		      		exit(0);
+		     	}
+		     	else printf("\n Password Changed\n");
+                }
+                else
+                {
+                cout<<"Password Dont Matcn \n Try Again";
+                goto q;
+                }
+                }
+           }
+           else
+ 		{
+ 			system("clear");
+        		printf("\nWrong user name!");
+        		exit(0);
+        		
+       			}
+       gdbm_close(dbp);
+        
 }
 
 
