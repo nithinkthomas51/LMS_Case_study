@@ -10,23 +10,23 @@ using namespace std;
 
 
 //Define Database
-GDBM_FILE dbf;
+GDBM_FILE dbf,dbb;
 datum key,data;
-char keybuf[50],databuf[256];
+char keybuf[50],databuf[512];
 
 //void Login(char ch)
 
 
-/*
+
 class Book
-{ char bookName[100];
-  char publication[100];
-  char category[100];
-  bool ref;
-  char author[100];
+{ public:
+  char bookName[30];
+  char publication[30];
+  char category[30];
+  int ref;
+  char author[30];
   int ISBN;
-  public:
-  string getBookName(void)const
+  /*string getBookName(void)const
   {
           return bookName;
   }
@@ -49,19 +49,44 @@ class Book
   int getISBN(void)const
   {
           return ISBN;
-  }
+  }*/
+  void AddBook()
+  {	dbb=gdbm_open("books.db",0,GDBM_WRCREAT,0666,0);
+	if(!dbb)
+	{
+		printf("\nError occured while receiving the data, please try again");
+		printf("\n");
+	}
+	
+	sprintf(keybuf,"%d",ISBN);
+	key.dsize=strlen(keybuf)+1;
+	key.dptr=keybuf;
+	sprintf(databuf,"%s %s %s %s %d",bookName,author,publication,category,ref);
+	data.dsize=strlen(databuf)+1;
+	data.dptr=databuf;
+    	if(gdbm_store(dbb,key,data,GDBM_INSERT))
+    	{	
+   		 printf("\nError occured!ISBN exists.Book  is not added\n");
+   		 exit(0);
+        }
+        else 
+	printf("\nBook added\n");	
+
+	gdbm_close(dbb);
+           
+ } 
 };
 
 
-*/
-class Lib
+
+class Lib:public Book
 //:public Books
 {
     char name[50];
 
     public:
-    Lib(){
-    }
+     Lib(){
+          }
     
     void Librarian(char* username)
      {        
@@ -85,17 +110,47 @@ class Lib
 	    if(gdbm_store(dbf,key,data,GDBM_INSERT))
             {	
              	printf("\nError occured!Emp id exists.Member  is not added\n");
+             	exit(0);
             }
-            else 
-            
-            printf("\n\n\t\t\t************Welcome Librarian************** \n\nPress any key \n");
-            
+            goto a;
+         }
+         else 
+         {     int ch;
+         	sprintf(keybuf,"%s",username);
+	    	key.dsize=strlen(keybuf)+1;
+	    	key.dptr=keybuf;
+	    	data=gdbm_fetch(dbf,key);
+	    	strcpy(databuf,data.dptr);
+               sscanf(databuf,"%s ",name);
+	        a:printf("\n\t\t\t\t*********** Welcome %s ***********\n\n\t\t\t\n",name);
+        	printf("\n\t\t\t\t\t\tSelect an Option \n");
+               printf("\n\t\t\t\t\t\t1.Add Book Or Journal\n\n\t\t\t\t\t\t2.Add User\n\n\t\t\t\t\t\t3.Remove Book or Journal \n\n\t\t\t\t\t\t4.Purchase Requests\n\n\t\t\t\t\t\t5.Change Password\n\n\t\t\t\t\t\t6.Notifications\n\n\t\t\t\t\t\t7.Close Application\n");
+        	printf("\n\n\t\t\t\t\t\tEnter your choice : ");
+        	scanf("%d",&ch);
+        	switch(ch)
+        	{
+        	case 1:system("clear");
+        	       printf("\n ISBN :");
+        	       scanf("%d",&ISBN);
+        	       printf("\n Book Name  : ");
+        	       scanf("%s",bookName);
+        	       printf("\n Author  : ");
+        	       scanf("%s",author);
+        	       printf("\n Publication  : ");
+        	       scanf("%s",publication);
+        	       printf("\n Category  : ");
+        	       scanf("%s",category);
+        	       printf("\n Is this a Reference Book?  (0 for No/1 for Yes): ");
+        	       scanf("%d",&ref);
+        	       AddBook();
+        	 }
+        
+     }       
     gdbm_close(dbf);
 }
-}
 
-    void AddBook();
-    void RemoveBook();
+
+    
     void PurchaseRequest();
     void RemoveUser();
 
@@ -350,7 +405,7 @@ void authenticate(int a)
              				{       gdbm_close(dbf);
              					flag=1;
               					system("clear");
-                                       l.Librarian(username);
+                                              l.Librarian(username);
               				}
     					else
      					{	
@@ -575,7 +630,7 @@ void authenticate(int a)
 					
 		
 	}		
-	gdbm_close(dbf);
+	//gdbm_close(dbf);
     	return ;
 }
 
