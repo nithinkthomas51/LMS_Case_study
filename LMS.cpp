@@ -5,6 +5,7 @@
 #include<cstring>
 #include <termios.h>
 #include <unistd.h>
+#include <sstream>
 using namespace std;
 
 //Define Database
@@ -19,7 +20,7 @@ void changePassword();
 
 class Book
 { public:
-  char bookName[30];
+  char bookName[20];
   char publication[30];
   char category[30];
   int ref;
@@ -60,7 +61,7 @@ class Book
 	sprintf(keybuf,"%d",ISBN);
 	key.dsize=strlen(keybuf)+1;
 	key.dptr=keybuf;
-	sprintf(databuf,"%s %s %s %s %d",bookName,author,publication,category,ref);
+	sprintf(databuf,"%d %s %s %s %s",ref,author,publication,category,bookName);
 	data.dsize=strlen(databuf)+1;
 	data.dptr=databuf;
     	if(gdbm_store(dbb,key,data,GDBM_INSERT))
@@ -88,7 +89,17 @@ class Book
 	key.dptr=keybuf;
 	data=gdbm_fetch(dbb,key);
         strcpy(databuf,data.dptr);
-        sscanf(databuf,"%s %s %s %s %d",bookName,author,publication,category,&ref);
+        sscanf(databuf,"%d %[^\n]%*c %[^\n]%*c %[^\n]%*c %[^\n]%*c",&ref,author,publication,category,bookName);
+        //cout<<' '<<ref<<' '<<author<<' '<<publication<<' '<<category<<' '<<bookName;
+       // char p[]="Harry Potter";
+       // if(strcasecmp(bookName,p)==0)
+      //  {
+       // cout<<endl<<"Succes";
+        //}
+        
+        
+        
+        
         printf("\nDo You want to delete  %s ?(Y/N)",bookName);
         cin>>ch;
         if(ch=='y'||ch=='Y')
@@ -106,9 +117,32 @@ class Book
     	
  
 };
+/*
+char *spacetouscore(char *str)
+{	
+	int i=0;
+	while (str[i])
+        {
+   		 if (isspace(str[i])) 
+       	 str[i]='_';
+    		 i++;
+ 	 }
+ 	 return str;
+}
 
+char *uscoretospace(char *str)
+{	
+	int i=0;
+	while (str[i])
+        {
+   		 if (isspace(str[i])) 
+       	 str[i]='_';
+    		 i++;
+ 	 }
+ 	 return str;
+}
 
-
+*/
 class Lib:public Book
 //:public Books
 {
@@ -170,16 +204,42 @@ class Lib:public Book
         		case 2: system("clear");
         	      	        printf("\n ISBN :");
         	       	scanf("%d",&ISBN);
-        	      	 	printf("\n Book Name  : ");
-        	       	scanf("%s",bookName);
-        	       	printf("\n Author  : ");
-        	       	scanf("%s",author);
-        	      	 	printf("\n Publication  : ");
-        	       	scanf("%s",publication);
-        	       	printf("\n Category  : ");
-        	       	scanf("%s",category);
-        	       	printf("\n Is this a Reference Book?  (0 for No/1 for Yes): ");
+        	       	
+        	       	
+        	       	printf("\n Is this a Reference Book?  (0 for No / 1 for Yes): ");
         	       	scanf("%d",&ref);
+        	       	getchar();
+        	       	
+        	      	 	printf("\n Book Name  : ");
+        	      	 	//scanf("%[^\n]s",bookName);
+        	      	 	//strcpy(bookName,spacetouscore(bookName));
+        	      	 	fgets(bookName,30,stdin);
+        	      	 	cout<<bookName;
+        	       	
+        	       	
+        	       	printf("\n Author  :" );
+        	       	//scanf("%[^\n]s",author);
+        	      	 	//strcpy(author,spacetouscore(author));
+        	      	 	fgets(author,30,stdin);
+        	      	 	cout<<author;
+        	       	
+        	       	     	       	
+        	       	
+        	      	 	printf("\n Publication  :");
+        	      	 	//scanf("%[^\n]s",publication);
+        	      	 	//strcpy(publication,spacetouscore(publication));
+        	      	 	fgets(publication,30,stdin);
+        	      	 	cout<<publication;
+        	       	
+        	       	
+        	       	
+        	       	printf("\n Category  :");
+                               //scanf("%[^\n]s",category);
+        	      	 	//strcpy(category,spacetouscore(category));
+        	      	 	fgets(category,30,stdin);
+        	      	 	cout<<category;
+        	       	
+        	       	
         	       	AddBook();
         	       	break;
         	       case 3:  system("clear");
