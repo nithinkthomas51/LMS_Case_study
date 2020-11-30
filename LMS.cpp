@@ -8,7 +8,6 @@
 #include<sstream>
 using namespace std;
 GDBM_FILE dbf,dbb,dbp,dbr;
-GDBM_FILE dbf,dbb,dbp;
 datum key,data;
 char keybuf[50],databuf[512];
 
