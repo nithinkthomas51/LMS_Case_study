@@ -5,13 +5,9 @@
 #include<cstring>
 #include <termios.h>
 #include <unistd.h>
-#include <sstream>
-
-
+#include<sstream>
 using namespace std;
-
-
-//Define Database
+GDBM_FILE dbf,dbb,dbp,dbr;
 GDBM_FILE dbf,dbb,dbp;
 datum key,data;
 char keybuf[50],databuf[512];
@@ -86,12 +82,12 @@ class Book
 		printf("\nError occured while receiving the data, please try again");
 		printf("\n");
 	}
-	
 	sprintf(keybuf,"%d",ISBN);
 	key.dsize=strlen(keybuf)+1;
 	key.dptr=keybuf;
 	data=gdbm_fetch(dbb,key);
         strcpy(databuf,data.dptr);
+        sscanf(databuf,"%s %s %s %s %d",bookName,author,publication,category,&ref);
         sscanf(databuf,"%d %[^\n]%*c %[^\n]%*c %[^\n]%*c %[^\n]%*c",&ref,author,publication,category,bookName);
         //cout<<' '<<ref<<' '<<author<<' '<<publication<<' '<<category<<' '<<bookName;
        // char p[]="Harry Potter";
@@ -102,7 +98,7 @@ class Book
         
         
         
-        
+  
         printf("\nDo You want to delete  %s ?(Y/N)",bookName);
         cin>>ch;
         if(ch=='y'||ch=='Y')
@@ -117,8 +113,171 @@ class Book
         exit(0);
         gdbm_close(dbb);
         }
+   void SearchBook(){			//searching book
+       		int a;
+       		printf("\n\n\t\t\t\t\t\t1.Particular Book\n\n\t\t\t\t\t\t2.List of Books\n\n\t\t\t\t\t\t3.Back\n\n\t\t\t\t\t\tEnter your choice : ");
+       		scanf("%d",&a);
+       		dbb=gdbm_open("books.db",0,GDBM_WRCREAT,0666,0);
+	if(!dbb)
+	{
+		printf("\nError occured while receiving the data, please try again");
+		printf("\n");
+	}
+       		if(a==2) {
+ 	printf("How do you want to search book?\n\n\t\t\t\t\t\t1.Name of the book\n\n\t\t\t\t\t\t2.Name of the author\n\n\t\t\t\t\t\t3.Category\n\n\t\t\t\t\t\t4.Back\n\n\t\t\t\t\t\tEnter your choice : ");
+ 	int csb;
+ 	char chsb[30];
+ 	scanf("%d",&csb);
+ 	switch(csb){
+ 	
+ 		case 1:
+ 			getchar();
+ 			printf("Book name : ");
+ 			fgets(chsb,30,stdin);
+ 			sprintf(keybuf,"%d",ISBN);
+ 			key.dsize=strlen(keybuf)+1;
+            key.dptr=keybuf;
+ 			key=gdbm_firstkey(dbb);
+    	while(key.dptr){
+    		data=gdbm_fetch(dbb,key);
+    		strcpy(databuf,data.dptr);
+    		sscanf(databuf,"%[^\n]%*c %[^\n]%*c %[^\n]%*c %[^\n]%*c %d",bookName,author,publication,category,&ref);
+   			strcat(bookName,"\n");
+    		if(strcasecmp(chsb,bookName)==0){
+    		printf("\nISBN :%s  ",key.dptr);
+    		printf("\nBook Name : %s \nAuthor : %s \nPublication : %s \nCategory : %s\n\n\n",bookName,author,publication,category);
+    		//break;
+    		}
+    		datum nextkey;
+    		nextkey=gdbm_nextkey(dbb,key);
+    		free(key.dptr);
+    		key=nextkey;
+    		}
+			break;
+    		
     	
- 
+    	case 2:
+    		getchar();
+    		printf("Author : ");
+ 			fgets(chsb,30,stdin);
+ 			sprintf(keybuf,"%d",ISBN);
+ 			key.dsize=strlen(keybuf)+1;
+            key.dptr=keybuf;
+ 			key=gdbm_firstkey(dbb);
+    	while(key.dptr){
+    		data=gdbm_fetch(dbb,key);
+    		strcpy(databuf,data.dptr);
+    		sscanf(databuf,"%[^\n]%*c %[^\n]%*c %[^\n]%*c %[^\n]%*c %d",bookName,author,publication,category,&ref);
+    		strcat(author,"\n");
+    		if(strcasecmp(chsb,author)==0){
+    		printf("\nISBN :%s  ",key.dptr);
+    		printf("\nBook Name : %s \nAuthor : %s \nPublication : %s \nCategory : %s\n\n\n",bookName,author,publication,category);
+    		//break;
+    		}
+    		datum nextkey;
+    		nextkey=gdbm_nextkey(dbb,key);
+    		free(key.dptr);
+    		key=nextkey;
+    		}
+    		break;
+    		
+    		
+    	case 3:
+    		getchar();
+    		printf("Category : ");
+ 			fgets(chsb,30,stdin);
+ 			sprintf(keybuf,"%d",ISBN);
+ 			key.dsize=strlen(keybuf)+1;
+            key.dptr=keybuf;
+ 			key=gdbm_firstkey(dbb);
+    	while(key.dptr){
+    		data=gdbm_fetch(dbb,key);
+    		strcpy(databuf,data.dptr);
+    		sscanf(databuf,"%[^\n]%*c %[^\n]%*c %[^\n]%*c %[^\n]%*c %d",bookName,author,publication,category,&ref);
+    		strcat(category,"\n");
+    		if(strcasecmp(chsb,category)==0){
+    		printf("\nISBN :%s  ",key.dptr);
+    		printf("\nBook Name : %s \nAuthor : %s \nPublication : %s \nCategory : %s\n\n\n",bookName,author,publication,category);
+    		//break;
+    		}
+    		datum nextkey;
+    		nextkey=gdbm_nextkey(dbb,key);
+    		free(key.dptr);
+    		key=nextkey;
+    		}
+    		break;
+    		
+    	
+    	default: 
+    		printf("Enter valid option\n");
+    			
+ 		}
+ 		
+ 	}
+ 	else if(a==1){
+ 		getchar();
+ 		char bn[30],au[30];
+ 		printf("Book Name : ");
+ 		fgets(bn,30,stdin);
+ 		printf("Author : ");
+ 		fgets(au,30,stdin);
+ 		sprintf(keybuf,"%d",ISBN);
+ 		key.dsize=strlen(keybuf)+1;
+        key.dptr=keybuf;
+ 		key=gdbm_firstkey(dbb);
+    	while(key.dptr){
+    		data=gdbm_fetch(dbb,key);
+    		strcpy(databuf,data.dptr);
+    		sscanf(databuf,"%[^\n]%*c %[^\n]%*c %[^\n]%*c %[^\n]%*c %d",bookName,author,publication,category,&ref);
+    		strcat(bookName,"\n");
+    		strcat(author,"\n");
+    		if((strcasecmp(bn,bookName)==0) && (strcasecmp(au,author)==0)){
+    		printf("\nISBN :%s  ",key.dptr);
+    		printf("\nBook Name : %s \nAuthor : %s \nPublication : %s \nCategory : %s\n\n\n",bookName,author,publication,category);
+    		//break;
+    		}
+    		//else
+    			//printf("Book not found\n");
+    		datum nextkey;
+    		nextkey=gdbm_nextkey(dbb,key);
+    		free(key.dptr);
+    		key=nextkey;
+    		}
+    		}
+    		gdbm_close(dbb);
+    		}
+    void purchase_req(char* username){
+    		dbr=gdbm_open("pur_req.db",0,GDBM_WRCREAT,0666,0);
+			if(!dbr)
+			{
+				printf("\nError occured while receiving the data, please try again");
+				printf("\n");
+			}
+    		getchar();
+    		printf("Book Name : ");
+    		fgets(bookName,30,stdin);
+    		printf("Author : ");
+    		fgets(author,30,stdin);
+    		srand(time(NULL));
+    		int a=rand()%100;
+    		sprintf(keybuf,"%d",a);
+    		key.dsize=strlen(keybuf)+1;
+			key.dptr=keybuf;
+			int status=0,approval=0;
+    		sprintf(databuf,"%s %s %s %d %d",username,bookName,author,status,approval);
+			data.dsize=strlen(databuf)+1;
+			data.dptr=databuf;
+    		if(gdbm_store(dbr,key,data,GDBM_INSERT))
+    		{	
+   		 		printf("\nError occured!Request exists.Book  is not added\n");
+   		 		exit(0);
+        	}
+        	else 
+				printf("\nPurchase Request placed\n");	
+
+			gdbm_close(dbr);
+           
+ } 
 };
 /*
 char *spacetouscore(char *str)
@@ -205,6 +364,19 @@ class Lib:public Book
         			break;
         			
         		case 2: system("clear");
+        	      	printf("\n ISBN :");
+        	       	scanf("%d",&ISBN);
+        	       	getchar();
+        	      	printf("\n Book Name  : ");
+        	       	fgets(bookName,30,stdin);
+        	       	printf("\n Author  : ");
+        	       	fgets(author,30,stdin);
+        	      	printf("\n Publication  : ");
+        	       	fgets(publication,30,stdin);
+        	       	printf("\n Category  : ");
+        	        fgets(category,30,stdin);
+        	       	printf("\n Is this a Reference Book?  (0 for No/1 for Yes): ");
+        	       	scanf("%d",&ref);
         	      	        printf("\n ISBN :");
         	       	scanf("%d",&ISBN);
         	       	
@@ -240,9 +412,7 @@ class Lib:public Book
                                //scanf("%[^\n]s",category);
         	      	 	//strcpy(category,spacetouscore(category));
         	      	 	fgets(category,30,stdin);
-        	      	 	cout<<category;
-        	       	
-        	       	
+                    cout<<category;
         	       	AddBook();
         	       	break;
         	       case 3:  system("clear");
@@ -250,10 +420,53 @@ class Lib:public Book
         	      	        scanf("%d",&ISBN);
         	      	        DeleteBook();
         	      	        break;
-        	       case 4:  break;
+        	       case 4:  int status,approval;
+        	       		dbr=gdbm_open("pur_req.db",0,GDBM_WRCREAT,0666,0);
+				if(!dbr)
+				{
+					printf("\nError occured while receiving the data, please try again");
+					printf("\n");
+				}  
+				key=gdbm_firstkey(dbr);
+			        while(key.dptr)
+			        {
+			            char ch;
+				    data=gdbm_fetch(dbr,key);
+				    strcpy(databuf,data.dptr);
+				    sscanf(databuf,"%s %[^\n]%*c %[^\n]%*c  %d %d",username,bookName,author,&status,&approval);
+				    if(status==0)
+				    {
+				      cout<<"The User "<<username<<" has placed a purchase request for the following"<<endl<<"Bookname : "<<bookName<<endl<<"Author   : "<<author<<endl<<"Approve ?(Y/N)";
+				      cin>>ch;
+				      if(ch=='y'||ch=='Y')
+				      {
+				        status=1;
+				        sprintf(databuf,"%s %s %s %d %d",username,bookName,author,status,approval);
+				        data.dsize=strlen(databuf)+1;
+     					data.dptr=databuf;
+     					gdbm_store(dbr,key,data,GDBM_REPLACE);
+				      }
+				      else
+				      {
+				      status=1;
+				      approval=1;
+				      //gdbm_delete(dbr,key);
+				      
+				      
+				      }
+				    }
+				      datum nextkey;
+    				  nextkey=gdbm_nextkey(dbr,key);
+   				      free(key.dptr);
+  				      key=nextkey;
+				   }
+				   gdbm_close(dbr);
+				   
+				   
+				    break;
         	       
-        	       case 5: changePassword();
-        	       	break;
+                 case 5: changePassword();
+        	       	       break;
         	       	
         	       
         	      	        
@@ -272,44 +485,66 @@ class Lib:public Book
 
 };
 
-/*
+
 class Stud:public Book
-{   int 
+{   	int id;
 	public:
-    void Student();
-    void SearchBook();
+    	void Student(char* username){
+		int ch;
+        printf("\n\nWelcome Student \n\n");
+        printf("\n\t\t\t\t\t\tSelect an Option \n");
+        printf("\n\t\t\t\t\t\t1.Search Book or Journal\n\n\t\t\t\t\t\t2.Book/Journal status\n\n\t\t\t\t\t\t3.Borrow Book \n\n\t\t\t\t\t\t4.Reserve Book\n\n\t\t\t\t\t\t5.Cancel Reservation\n\n\t\t\t\t\t\t6.Purchase Request\n\n\t\t\t\t\t\t7.Notification\n\n\t\t\t\t\t\t8.Close Application\n");
+        printf("\n\n\t\t\t\t\t\tEnter your choice : ");
+        scanf("%d",&ch);
+        
+        switch(ch){
+        	case 1:
+        		SearchBook();
+        		break;
+        	case 2:
+        		purchase_req(username);
+        		break;
+        		
+        		}
+        	
+        }
+    /*void SearchBook();
     void Borrow();
     void BookStatus();
     void Reserve();
     void ReserveCancellation();
     void PurchaseRequest();
-    
+    */
 };
 
 class Fac:public Book
 {
-    int 
+    int id;
 	public:
-    void Student();
-    void SearchBook();
+    void Faculty(){
+    	int ch;
+        printf("\n\nWelcome Faculty \n\n");
+        printf("\n\t\t\t\t\t\tSelect an Option \n");
+        printf("\n\t\t\t\t\t\t1.Search Book or Journal\n\n\t\t\t\t\t\t2.Book/Journal status\n\n\t\t\t\t\t\t3.Borrow Book \n\n\t\t\t\t\t\t4.Reserve Book\n\n\t\t\t\t\t\t5.Cancel Reservation\n\n\t\t\t\t\t\t6.Purchase Request\n\n\t\t\t\t\t\t7.Notification\n\n\t\t\t\t\t\t8.Close Application\n");
+        printf("\n\n\t\t\t\t\t\tEnter your choice : ");
+        scanf("%d",&ch);
+        
+        switch(ch){
+        	case 1:
+        		SearchBook();
+        		}
+        }
+    /*void SearchBook();
     void Borrow();
     void BookStatus();
     void Reserve();
     void ReserveCancellation();
-
+*/
 };
 
-*/
+
 
 //Student
-void Student()
-{
-	int a;
-        printf("\n\nWelcome Student \n\n Press any key \n ");
-        scanf("%d",&a);
-
-}
-
 
 
 //Librarian
@@ -332,22 +567,19 @@ void Student()
 //Faculty
 */
 
-void  Faculty()
+/*void  Faculty()
 { 
 	int a;
         printf("\n\nWelcome Faculty \n\n Press any key \n");
         scanf("%d",&a);
 }
-
+*/
 
 //Library Reports
 void Report()
 {
 
 }
-
-
-
 //Help
 void Help()
 { 
@@ -411,10 +643,6 @@ void Help()
 	cin>>ch;
 	}while(ch=='Y' or ch=='y');
 }
-
-
-
-
 //Authenticate
 
 void authenticate(int a)
@@ -563,7 +791,8 @@ void authenticate(int a)
 		}
 	}
 	else if(a==2)   //Authentication for Faculty
-	{	int ch;
+	{	Fac f;	
+		int ch;
                getchar();
 		printf("\n\t\t\tWelcome to Central Library");
 		printf("\n\nDo you want to\n1.Login\n2.Signup");
@@ -609,7 +838,7 @@ void authenticate(int a)
              				{
              					flag=1;
               					system("clear");
-              					Faculty();
+              					f.Faculty();
               				}
     					else
      					{	system("clear");		
@@ -654,7 +883,7 @@ void authenticate(int a)
              		else    
              		{
              			printf("\nFaculty account Created\n");
-             			Faculty();
+             			f.Faculty();
              		}
 	   	}
 	  		
@@ -662,7 +891,8 @@ void authenticate(int a)
 		
 	}
 	else if(a==3)    //Authentication for Student
-	{	int ch;
+	{	Stud s;
+		int ch;
                getchar();
 		printf("\n\t\t\tWelcome to Central Library");
 		printf("\n\nDo you want to\n1.Login\n2.Signup");
@@ -708,7 +938,7 @@ void authenticate(int a)
              				{
              					flag=1;
               					system("clear");
-              					Student();
+              					s.Student(username);
               				}
     					else
      					{	system("clear");		
@@ -753,7 +983,7 @@ void authenticate(int a)
              		else    
              		{
              			printf("\nStudent account Created\n");
-             			Student();
+             			s.Student(username);
              		}
 	   	}
 	  		
@@ -839,19 +1069,6 @@ void changePassword()
        gdbm_close(dbp);
         
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 int main(int argc,char* argv[])
 {
         int ch;
